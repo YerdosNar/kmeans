@@ -18,9 +18,11 @@ else
     if [ "$1" == "M" ] || [ "$1" == "mnist" ] || [ "$1" == "m" ]; then
         gcc -o mnist mnist_img.c kmeans.c -lm -lSDL2 -O3
         ./mnist
+        rm mnist
     elif [ "$1" == "T" ] || [ "$1" == "test" ] || [ "$1" == "t" ]; then
         gcc -o test test.c kmeans.c -lm -lSDL2 -O3
         ./test
+        rm test
     else
         echo "Invalid argument"
     fi
