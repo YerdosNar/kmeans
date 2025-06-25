@@ -1,5 +1,3 @@
-package linearAlgebra.kmeans;
-
 import java.util.*;
 
 public class KMeans {

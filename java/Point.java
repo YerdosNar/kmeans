@@ -1,5 +1,3 @@
-package linearAlgebra.kmeans;
-
 public class Point {
 	public double x, y;
 
@@ -7,7 +5,7 @@ public class Point {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public double distance(Point p) {
 		double xCoor = this.x - p.x;
 		double yCoor = this.y - p.y;
