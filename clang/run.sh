@@ -29,6 +29,7 @@ else
                 echo "Options:"
                 echo "          -M/-m/--mnist       to run mnist images"
                 echo "          -T/-t/--test        to run custom test"
+                echo "          -h/--help           to show this message"
         else
                 echo "Invalid argument"
         fi
