@@ -3,17 +3,16 @@
 #include <math.h>
 #include "kmeans.h"
 
-#define MINUS_SQUARE(x2, x1) (((x2) - (x1)) * ((x2) - (x1)))
-
 static int k, num_points;
 static Point *points = NULL;
 static Cluster *clusters = NULL;
 
+static inline float minus_square(float x2, float x1) {return (x2-x1)*(x2-x1);}
+
 static float distance(Point p1, Point p2) {
     float sum = 0.0f;
-    for(int i = 0; i < p1.dimension; i++) {
-        sum += MINUS_SQUARE(p2.coordinates[i], p1.coordinates[i]);
-    }
+    for(int i = 0; i < p1.dimension; i++)
+        sum += minus_square(p2.coordinates[i], p1.coordinates[i]);
     return sqrtf(sum);
 }
 
@@ -69,8 +68,11 @@ void init_kmeans_wait(int num_clusters, int np, Point *data_points) {
 
         int idx = rand() % num_points;
         clusters[i].centroid.dimension = points[idx].dimension;
-        clusters[i].centroid.coordinates = malloc(points[idx].dimension * sizeof(float));
-        memcpy(clusters[i].centroid.coordinates, points[idx].coordinates, points[idx].dimension * sizeof(float));
+        clusters[i].centroid.coordinates = malloc(points[idx].dimension *
+                                                  sizeof(float));
+        memcpy(clusters[i].centroid.coordinates,
+               points[idx].coordinates,
+               points[idx].dimension * sizeof(float));
     }
 }
 
@@ -84,7 +86,8 @@ void init_kmeans(int num_clusters, int np, Point *data_points) {
         clusters[i].points = malloc(num_points * sizeof(Point));
         clusters[i].size = 0;
         clusters[i].centroid.dimension = points[0].dimension;
-        clusters[i].centroid.coordinates = malloc(points[0].dimension * sizeof(float));
+        clusters[i].centroid.coordinates = malloc(points[0].dimension *
+                                                  sizeof(float));
     }
 
     // 1. Choose the first centroid randomly
@@ -101,9 +104,7 @@ void init_kmeans(int num_clusters, int np, Point *data_points) {
             float min_dist = distance(points[i], clusters[0].centroid);
             for (int j = 1; j < c; j++) {
                 float d = distance(points[i], clusters[j].centroid);
-                if (d < min_dist) {
-                    min_dist = d;
-                }
+                if (d < min_dist) min_dist = d;
             }
             distances[i] = min_dist * min_dist; // square it
             total += distances[i];
@@ -115,10 +116,7 @@ void init_kmeans(int num_clusters, int np, Point *data_points) {
         int next_idx = 0;
         for (int i = 0; i < num_points; i++) {
             sum += distances[i];
-            if (sum >= r) {
-                next_idx = i;
-                break;
-            }
+            if (sum >= r) {next_idx = i;break;}
         }
 
         memcpy(clusters[c].centroid.coordinates, points[next_idx].coordinates,
@@ -133,26 +131,21 @@ void one_iter() {
     update_centroids();
 }
 
-void run_kmeans(int max_iteration) {
-    for(int iter = 0; iter < max_iteration; iter++) {
-        one_iter();
-    }
-}
+void run_kmeans(int max) {for(int i = 0; i< max; i++) one_iter();}
 
 Point *get_centroids() {
     Point *centroids = malloc(k * sizeof(Point));
     for(int i = 0; i < k; i++) {
         centroids[i].dimension = clusters[i].centroid.dimension;
-        centroids[i].coordinates = malloc(centroids[i].dimension * sizeof(float));
+        centroids[i].coordinates = malloc(centroids[i].dimension *
+                                          sizeof(float));
         memcpy(centroids[i].coordinates, clusters[i].centroid.coordinates,
                centroids[i].dimension * sizeof(float));
     }
     return centroids;
 }
 
-Cluster *get_clusters() {
-    return clusters;
-}
+Cluster *get_clusters() {return clusters;}
 
 void free_kmeans() {
     if(!clusters) return;
