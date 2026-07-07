@@ -17,9 +17,7 @@ static float distance(Point p1, Point p2) {
 }
 
 static void assign_points() {
-    for(int i = 0; i < k; i++) {
-        clusters[i].size = 0;
-    }
+    for(int i = 0; i < k; i++) clusters[i].size = 0;
 
     for(int i = 0; i < num_points; i++) {
         int closest = 0;
@@ -53,26 +51,6 @@ static void update_centroids() {
         for(int d = 0; d < clusters[i].centroid.dimension; d++) {
             clusters[i].centroid.coordinates[d] /= clusters[i].size;
         }
-    }
-}
-
-void init_kmeans_wait(int num_clusters, int np, Point *data_points) {
-    k = num_clusters;
-    num_points = np;
-    points = data_points;
-
-    clusters = malloc(k * sizeof(Cluster));
-    for(int i = 0; i < k; i++) {
-        clusters[i].points = malloc(num_points * sizeof(Point));
-        clusters[i].size = 0;
-
-        int idx = rand() % num_points;
-        clusters[i].centroid.dimension = points[idx].dimension;
-        clusters[i].centroid.coordinates = malloc(points[idx].dimension *
-                                                  sizeof(float));
-        memcpy(clusters[i].centroid.coordinates,
-               points[idx].coordinates,
-               points[idx].dimension * sizeof(float));
     }
 }
 
@@ -126,12 +104,9 @@ void init_kmeans(int num_clusters, int np, Point *data_points) {
     }
 }
 
-void one_iter() {
-    assign_points();
-    update_centroids();
-}
-
+void one_iter()          {assign_points();update_centroids();}
 void run_kmeans(int max) {for(int i = 0; i< max; i++) one_iter();}
+Cluster *get_clusters()  {return clusters;}
 
 Point *get_centroids() {
     Point *centroids = malloc(k * sizeof(Point));
@@ -145,7 +120,6 @@ Point *get_centroids() {
     return centroids;
 }
 
-Cluster *get_clusters() {return clusters;}
 
 void free_kmeans() {
     if(!clusters) return;
